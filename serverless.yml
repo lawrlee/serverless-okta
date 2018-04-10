@@ -1,0 +1,49 @@
+# Welcome to serverless. Read the docs
+# https://serverless.com/framework/docs/
+
+# Serverless.yml is the configuration the CLI
+# uses to deploy your code to your provider of choice
+
+# The `service` block is the name of the service
+service: serverless-okta
+
+plugins:
+  - serverless-offline
+
+# The `provider` block defines where your service will be deployed
+provider:
+  name: aws
+  runtime: nodejs6.10
+  region: us-west-2
+
+# The `functions` block defines what code to deploy
+functions:
+
+  authorize:
+    handler: authorize.handler
+    environment:
+      ISSUER: https://dev-267828.oktapreview.com/oauth2/default
+      AUDIENCE: api://default
+
+  getCats:
+    handler: functions/getCats.handler
+    events:
+      - http:
+          path: cats
+          method: get
+          cors: true
+          # authorizer: authorize # Cats are public
+
+  getPangolins:
+    handler: functions/getPangolins.handler
+    events:
+      - http:
+          path: pangolins
+          method: get
+          cors: true
+          authorizer:
+            name: authorize
+            resultTtlInSeconds: 300
+            identitySource: method.request.header.Authorization
+            identityValidationExpression: ^Bearer [-0-9a-zA-z\.]*$
+            type: token

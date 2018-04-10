@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "fs": "^0.0.1-security",
+    "jwt-decode": "^2.2.0",
+    "oauth2-bearer-jwt-handler": "https://github.com/mcguinness/node-oauth2-bearer-jwt-handler.git"
+  },
+  "devDependencies": {
+    "serverless-offline": "^3.20.1"
+  }
+}
