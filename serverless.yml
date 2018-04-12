@@ -15,6 +15,11 @@ provider:
   name: aws
   runtime: nodejs6.10
   region: us-west-2
+  stage: ${opt:stage, 'local'}
+  environment:
+    ISSUER: ${file(./config.${self:provider.stage}.json):issuer}
+    AUDIENCE: ${file(./config.${self:provider.stage}.json):audience}
+    JWKS: ${file(./config.${self:provider.stage}.json):jwks}
 
 # The `functions` block defines what code to deploy
 functions:
