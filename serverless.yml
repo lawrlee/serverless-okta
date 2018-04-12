@@ -16,19 +16,16 @@ provider:
   runtime: nodejs6.10
   region: us-west-2
   stage: ${opt:stage, 'local'}
-  environment:
-    ISSUER: ${file(./config.${self:provider.stage}.json):issuer}
-    AUDIENCE: ${file(./config.${self:provider.stage}.json):audience}
-    JWKS: ${file(./config.${self:provider.stage}.json):jwks}
 
 # The `functions` block defines what code to deploy
 functions:
 
   authorize:
-    handler: authorize.handler
+    handler: functions/oktaAuthorize.handler
     environment:
-      ISSUER: https://dev-267828.oktapreview.com/oauth2/default
-      AUDIENCE: api://default
+      ISSUER: ${file(./config.${self:provider.stage}.json):issuer}
+      AUDIENCE: ${file(./config.${self:provider.stage}.json):audience}
+      JWKS: ${file(./config.${self:provider.stage}.json):jwks}
 
   getCats:
     handler: functions/getCats.handler
