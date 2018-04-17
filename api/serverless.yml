@@ -7,8 +7,13 @@
 # The `service` block is the name of the service
 service: serverless-okta
 
+custom:
+  webpack:
+    packager: 'yarn'
+
 plugins:
   - serverless-offline
+  - serverless-webpack
 
 # The `provider` block defines where your service will be deployed
 provider:
@@ -25,7 +30,7 @@ functions:
     environment:
       ISSUER: ${file(./config.${self:provider.stage}.json):issuer}
       AUDIENCE: ${file(./config.${self:provider.stage}.json):audience}
-      JWKS: ${file(./config.${self:provider.stage}.json):jwks}
+      JWKS: ${ssm:/okta/develop/jwks}
 
   getCats:
     handler: functions/getCats.handler
