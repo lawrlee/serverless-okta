@@ -1,13 +1,12 @@
-const JwtTokenHandler = require('oauth2-bearer-jwt-handler').JwtTokenHandler;
+const Oauth2BearerJwtHandler = require('oauth2-bearer-jwt-handler');
+const JwtTokenHandler = Oauth2BearerJwtHandler.JwtTokenHandler;
 const jwt = require('jsonwebtoken');
+const fs = require('fs');
 const jwtParams = {
   issuer: process.env.ISSUER,
   audience: process.env.AUDIENCE,
-  jwks: process.env.JWKS
+  jwks: JSON.parse(process.env.JWKS)
 };
-console.log("Environment variables");
-console.log(process.env);
-console.log(jwtParams);
 const jwtTokenHandler = new JwtTokenHandler(jwtParams);
 
 const buildPolicy = (user, resource, context) => {
@@ -28,11 +27,6 @@ const buildPolicy = (user, resource, context) => {
 };
 
 module.exports.handler = (event, context, callback) => {
-  console.log('Event received');
-  console.log(event);
-  console.log('Context received');
-  console.log(context);
-  console.log('token');
   console.log(jwt.decode(event.authorizationToken.replace('Bearer ', '')));
 
   jwtTokenHandler.verifyRequest({
