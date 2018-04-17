@@ -19,6 +19,11 @@ module.exports.handler = (event, context, callback) => {
     body: JSON.stringify({
       pangolins: [
         {
+          id: 1,
+          name: 'King Penguin',
+          address: '100 North Pole Drive',
+        },
+        {
           id: 2,
           name: 'Pengu',
           address: '123 Carapace Drive',

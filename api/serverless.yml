@@ -31,7 +31,7 @@ functions:
     handler: functions/getCats.handler
     events:
       - http:
-          path: cats
+          path: api/cats
           method: get
           cors: true
           # authorizer: authorize # Cats are public
@@ -40,7 +40,7 @@ functions:
     handler: functions/getPangolins.handler
     events:
       - http:
-          path: pangolins
+          path: api/pangolins
           method: get
           cors: true
           authorizer:

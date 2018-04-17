@@ -1,15 +1,32 @@
 version: '2'
 
 services:
-  app:
-    build: .
+  api:
+    build: ./api
     volumes:
       - ~/.aws:/root/.aws
-      - api_node_modules:/app/api/node_modules
-      - web_node_modules:/app/web/node_modules
-      - .:/app
+      - api_node_modules:/api/node_modules
+      - ./api:/api
     ports:
-      - 3001:3000
+      - 5000:5000
+
+  web:
+    build: ./web
+    volumes:
+      - ~/.aws:/root/.aws
+      - web_node_modules:/web/node_modules
+      - ./web:/web
+    links:
+      - api
+    ports:
+      - 3000:3000
+    environment:
+      - PORT=3000
+      - REACT_APP_RESOURCE_API_URL=http://localhost:5000/api
+      - REACT_APP_OKTA_CLIENT_ID=${OKTA_CLIENT_ID}
+      - REACT_APP_OKTA_ISSUER=${OKTA_ISSUER}
+      - REACT_APP_OKTA_REDIRECT_URI=${OKTA_REDIRECT_URI}
+      - REACT_APP_OKTA_SCOPE=${OKTA_SCOPE}
 
 volumes:
   api_node_modules:

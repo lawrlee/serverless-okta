@@ -16,9 +16,11 @@ import { Security, SecureRoute, ImplicitCallback } from '@okta/okta-react';
 import { Container } from 'semantic-ui-react';
 import config from './config';
 import Home from './Home';
-import Messages from './Messages';
+import Animals from './Animals';
 import Navbar from './Navbar';
 import Profile from './Profile';
+
+console.log(config);
 
 class App extends Component {
   render() {
@@ -33,8 +35,9 @@ class App extends Component {
           <Container text style={{ marginTop: '7em' }}>
             <Route path="/" exact component={Home} />
             <Route path="/implicit/callback" component={ImplicitCallback} />
-            <SecureRoute path="/pangolins" component={Messages} />
-            <SecureRoute path="/cats" component={Profile} />
+            <SecureRoute path="/pangolins" component={Animals} renderProps={{animalType: 'pangolins'}}/>
+            <SecureRoute path="/cats" component={Animals} renderProps={{animalType: 'cats'}}/>
+            <SecureRoute path="/profile" component={Profile} />
           </Container>
         </Security>
       </Router>
