@@ -30,6 +30,7 @@ functions:
     environment:
       ISSUER: ${file(./config.${self:provider.stage}.json):issuer}
       AUDIENCE: ${file(./config.${self:provider.stage}.json):audience}
+      CID: ${file(./config.${self:provider.stage}.json):client_id}
       JWKS: ${ssm:/okta/develop/jwks}
 
   getCats:

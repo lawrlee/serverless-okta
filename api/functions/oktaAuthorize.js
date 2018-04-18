@@ -1,12 +1,12 @@
 const Oauth2BearerJwtHandler = require('oauth2-bearer-jwt-handler');
 const JwtTokenHandler = Oauth2BearerJwtHandler.JwtTokenHandler;
 const jwt = require('jsonwebtoken');
-const fs = require('fs');
 const jwtParams = {
   issuer: process.env.ISSUER,
   audience: process.env.AUDIENCE,
   jwks: JSON.parse(process.env.JWKS)
 };
+const cid = process.env.CID;
 const jwtTokenHandler = new JwtTokenHandler(jwtParams);
 
 const buildPolicy = (user, resource, context) => {
@@ -39,12 +39,16 @@ module.exports.handler = (event, context, callback) => {
       callback('Unauthorized');
     } else {
       console.log('request principal: ', claims);
-      const policyDocument = buildPolicy(
-        claims.sub,
-        event.methodArn,
-        {user: claims.uid}
-      );
-      callback(null, policyDocument);
+      if (cid !== claims.cid) {
+        callback('Client ID does not match');
+      } else {
+        const policyDocument = buildPolicy(
+          claims.sub,
+          event.methodArn,
+          {user: claims.uid}
+        );
+        callback(null, policyDocument);
+      }
     }
   });
 
