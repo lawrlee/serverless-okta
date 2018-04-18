@@ -9,6 +9,8 @@ services:
       - ./api:/api
     ports:
       - 5000:5000
+    environment:
+      - ENV:${ENV}
 
   web:
     build: ./web
@@ -20,13 +22,11 @@ services:
       - api
     ports:
       - 3000:3000
+    env_file:
+      - ${ENV}.env
     environment:
       - PORT=3000
-      - REACT_APP_RESOURCE_API_URL=http://localhost:5000/api
-      - REACT_APP_OKTA_CLIENT_ID=${OKTA_CLIENT_ID}
-      - REACT_APP_OKTA_ISSUER=${OKTA_ISSUER}
-      - REACT_APP_OKTA_REDIRECT_URI=${OKTA_REDIRECT_URI}
-      - REACT_APP_OKTA_SCOPE=${OKTA_SCOPE}
+      - ${ENV}.env
 
 volumes:
   api_node_modules:
