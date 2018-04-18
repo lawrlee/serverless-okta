@@ -1,13 +1,12 @@
-const Oauth2BearerJwtHandler = require('oauth2-bearer-jwt-handler');
-const JwtTokenHandler = Oauth2BearerJwtHandler.JwtTokenHandler;
 const jwt = require('jsonwebtoken');
-const fs = require('fs');
-const jwtParams = {
+const OktaJwtVerifier = require('@okta/jwt-verifier');
+const oktaJwtVerifier = new OktaJwtVerifier({
   issuer: process.env.ISSUER,
-  audience: process.env.AUDIENCE,
-  jwks: JSON.parse(process.env.JWKS)
-};
-const jwtTokenHandler = new JwtTokenHandler(jwtParams);
+  assertClaims: {
+    aud: process.env.AUDIENCE,
+    cid: process.env.CID
+  }
+});
 
 const buildPolicy = (user, resource, context) => {
   return {
@@ -27,25 +26,22 @@ const buildPolicy = (user, resource, context) => {
 };
 
 module.exports.handler = (event, context, callback) => {
-  console.log(jwt.decode(event.authorizationToken.replace('Bearer ', '')));
+  const accessToken = event.authorizationToken.replace('Bearer ', '');
+  console.log(jwt.decode(accessToken));
 
-  jwtTokenHandler.verifyRequest({
-    headers: {
-      authorization: event.authorizationToken
-    }
-  }, function (err, claims) {
-    if (err) {
-      console.log('Failed to validate bearer token', err);
-      callback('Unauthorized');
-    } else {
-      console.log('request principal: ', claims);
+  oktaJwtVerifier.verifyAccessToken(accessToken)
+    .then(jwt => {
+      console.log('Authorized: ', jwt);
       const policyDocument = buildPolicy(
-        claims.sub,
+        jwt.claims.sub,
         event.methodArn,
-        {user: claims.uid}
+        {user: jwt.claims.uid}
       );
       callback(null, policyDocument);
-    }
-  });
+    })
+    .catch(err => {
+      console.log('Failed to validate bearer token ', err);
+      callback('Unauthorized')
+    });
 
 };
